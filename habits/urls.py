@@ -2,8 +2,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('', views.get_habits),
-    # path('add-habit/'),
+    path('', views.habits_list),
     # path('increase-streak/'),
     # path('reset-streak/'),
     # path('delete-habit/'),
