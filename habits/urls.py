@@ -3,8 +3,7 @@ from . import views
 
 urlpatterns = [
     path('', views.habits_list),
-    # path('increase-streak/'),
-    # path('reset-streak/'),
+    path('streak/<int:habit_id>/', views.update_streak),
     # path('delete-habit/'),
     # path('add-category/'),
     # path('update-habit-categories/'),

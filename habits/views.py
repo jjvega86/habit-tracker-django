@@ -18,7 +18,36 @@ def habits_list(request):
         return Response(serializer.data, status=status.HTTP_200_OK)
     elif request.method == 'POST':
         serializer = HabitSerializer(data=request.data)
-    if serializer.is_valid():
-        serializer.save(user=request.user)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        if serializer.is_valid():
+            serializer.save(user=request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['PATCH'])
+@permission_classes([IsAuthenticated])
+def update_streak(request, habit_id):
+    '''
+    Update streak counter for habit
+    If there's a 'reset' query param, set streak to 0
+    Otherwise, increase by 1
+    '''
+    try:
+        habit = Habit.objects.get(id=habit_id)
+    except:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    if habit.user_id != request.user.id:
+        return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+    type_param = request.query_params.get('type')
+    print(type_param)
+
+    if type_param == 'reset':
+        habit.streak_count = 0
+    else:
+        habit.streak_count += 1
+
+    habit.save()
+    serializer = HabitSerializer(habit)
+    return Response(serializer.data, status=status.HTTP_200_OK)
